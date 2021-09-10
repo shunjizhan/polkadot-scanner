@@ -6,7 +6,7 @@ const isProd = process.env.NODE_ENV === 'production';
 
 const devOptions = {
   mode: 'development',
-  devtool: 'inline-source-map',
+  devtool: 'source-map',
   watchOptions: {
     aggregateTimeout: 0, // debounce time for re-compile
     ignored: ['node_modules/**'],
@@ -15,7 +15,7 @@ const devOptions = {
 
 const prodOptions = {
   mode: 'production',
-}
+};
 
 const options = isProd ? prodOptions : devOptions;
 
@@ -28,6 +28,9 @@ module.exports = {
   resolve: {
     // our code can resolve 'xxx' instead of writing 'xxx.jsx'
     extensions: ['*', '.js', '.jsx'],
+    fallback: {
+      crypto: false,
+    },
   },
   module: {
     // For every file that match regex in 'test', webpack pipes the code through to loaders

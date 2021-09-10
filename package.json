@@ -7,8 +7,7 @@
     "dist/polkadot-scanner.bundle.js"
   ],
   "author": "Shunji Zhan <shunhahaha@live.com>",
-  "keywords": [
-  ],
+  "keywords": [],
   "homepage": "https://github.com/shunjizhan/polkadot-scanner",
   "repository": {
     "type": "git",
@@ -29,6 +28,7 @@
   "devDependencies": {
     "@babel/core": "^7.11.6",
     "@babel/plugin-proposal-optional-chaining": "^7.12.7",
+    "@babel/plugin-transform-runtime": "^7.15.0",
     "@babel/preset-env": "^7.11.5",
     "@babel/preset-react": "^7.10.4",
     "babel-eslint": "^10.1.0",
@@ -53,8 +53,11 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
+    "@polkadot/api": "^5.8.3",
+    "buffer": "^6.0.3",
+    "crypto": "^1.0.1",
+    "prop-types": "^15.7.2",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "prop-types": "^15.7.2"
+    "react-dom": "^16.13.1"
   }
 }
