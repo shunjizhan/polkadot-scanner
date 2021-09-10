@@ -14,12 +14,15 @@ import {
 import '../../styles.scss';
 import 'antd/dist/antd.css';
 
-const InputField = ({ value, onChange }) => (
-  <input
-    className='input-container__field'
-    value={ value }
-    onChange={ onChange }
-  />
+const InputField = ({ name, value, onChange }) => (
+  <div>
+    { name }
+    <input
+      className='input-container__field'
+      value={ value }
+      onChange={ onChange }
+    />
+  </div>
 );
 
 const Progress = ({ cur, all }) => (
@@ -56,8 +59,8 @@ const EventTable = ({ dataSource }) => {
 };
 
 const Scanner = () => {
-  const [startBlock, setStartBlock] = useState(6763530);
-  const [endBlock, setEndBlock] = useState(6763540);
+  const [startBlock, setStartBlock] = useState(6763000);
+  const [endBlock, setEndBlock] = useState(6763100);
   const [rpc, setRpc] = useState('wss://rpc.polkadot.io');
   const [events, setEvents] = useState([]);
   const [count, setCount] = useState(-1);
@@ -74,9 +77,13 @@ const Scanner = () => {
     })();
   }, []);
 
-  const handleStartBlockChange = e => setStartBlock(e.target.value);
-  const handleEndBlockChange = e => setEndBlock(e.target.value);
-  const handleRpcChange = e => setRpc(e.target.value);
+  const getInputHandler = fn => e => {
+    fn(e.target.value);
+    setCount(-1);
+  };
+  const handleStartBlockChange = getInputHandler(setStartBlock);
+  const handleEndBlockChange = getInputHandler(setEndBlock);
+  const handleRpcChange = getInputHandler(setRpc);
 
   const getApi = async () => {
     if (rpc === prevApi.current.rpc) {
@@ -92,7 +99,6 @@ const Scanner = () => {
   const fetchData = async () => {
     setEvents([]);
     setCount(0);
-
     const api = await getApi();
 
     const _fetch = async block => {
@@ -121,14 +127,17 @@ const Scanner = () => {
         <div>
           <section id='input-container'>
             <InputField
+              name='startBlock'
               value={ startBlock }
               onChange={ handleStartBlockChange }
             />
             <InputField
+              name='endBlock'
               value={ endBlock }
               onChange={ handleEndBlockChange }
             />
             <InputField
+              name='RPC'
               value={ rpc }
               onChange={ handleRpcChange }
             />
@@ -141,6 +150,7 @@ const Scanner = () => {
               fetch data
             </button>
           </section>
+          <br />
           { count > -1
             && (
               <Progress
