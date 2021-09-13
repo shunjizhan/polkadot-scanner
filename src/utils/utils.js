@@ -32,6 +32,7 @@ export const getEventsForBlock = async (api, blockNumber) => {
       .map(({ event }) => `${event.section}.${event.method}`);
 
     res.push({
+      block: blockNumber,
       section,
       method,
       events: events.join(', ') || 'no events',

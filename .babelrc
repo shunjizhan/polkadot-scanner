@@ -5,6 +5,7 @@
   ],
   "plugins": [
     "@babel/plugin-proposal-optional-chaining",
-    "@babel/transform-runtime"
+    "@babel/transform-runtime",
+    "@emotion"
   ]
 }

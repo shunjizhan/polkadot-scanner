@@ -1,17 +1,65 @@
-#Scanner {
+$input-width: 300px;
 
+#Scanner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin-top: 20px;
 }
 
 #input-container {
   display: flex;
   flex-direction: column;
-  width: 300px;
+  width: $input-width;
 }
 
 .input-container__field {
-  margin-left: 10px;
+  width: 100%;
 }
 
 #input-container__button {
+  // border-radius: 5px;
+  margin-top: 10px;
+}
 
+#loading-overlay__text {
+  font-size: 300%;
+  margin: 100px 0 50px 0;
+}
+
+#table-container {
+  width: 80%;
+  // border: 1px solid red;
+}
+
+#data-table {
+  width: 100%;
+  // border: 1px solid orange;
+}
+
+#progress {
+  min-width: 588px;
+}
+
+#progress-count {
+  // border: 1px solid red;
+  // float: right;
+  display: flex;
+  margin: 5px 0;
+}
+
+#toolBox {
+  display: flex;
+  // border: 1px solid blue;
+  margin-bottom: 10px;
+  width: 80%;
+  height: 50px;
+  justify-content: center;
+  align-items: center;
+}
+
+#filter {
+  border: 1px solid yellow;
+  margin-left: 50px;
 }

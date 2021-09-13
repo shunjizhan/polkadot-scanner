@@ -1,70 +1,31 @@
 import React, {
-  useReducer,
   useState,
   useRef,
 } from 'react';
+import { Button } from 'antd';
 
-import { Table } from 'antd';
+import EventTable from './EventTable';
+import Progress from './Progress';
+import InputField from './InputField';
+import Loading from './Loading';
 
 import {
   createRpc,
   getEventsForBlock,
-} from '../../utils/utils';
+} from '../utils/utils';
 
-import '../../styles.scss';
+import '../styles.scss';
 import 'antd/dist/antd.css';
 
-const InputField = ({ name, value, onChange }) => (
-  <div>
-    { name }
-    <input
-      className='input-container__field'
-      value={ value }
-      onChange={ onChange }
-    />
-  </div>
-);
-
-const Progress = ({ cur, all }) => (
-  <div>
-    { `finished: ${cur}/${all}` }
-  </div>
-);
-
-const EventTable = ({ dataSource }) => {
-  const columns = [
-    {
-      title: 'Section',
-      dataIndex: 'section',
-      key: 'section',
-    },
-    {
-      title: 'Method',
-      dataIndex: 'method',
-      key: 'method',
-    },
-    {
-      title: 'Events',
-      dataIndex: 'events',
-      key: 'events',
-    },
-  ];
-
-  return (
-    <Table
-      dataSource={ dataSource }
-      columns={ columns }
-    />
-  );
-};
-
+const defaultRpc = 'wss://rpc.polkadot.io';
 const Scanner = () => {
   const [startBlock, setStartBlock] = useState(6763000);
   const [endBlock, setEndBlock] = useState(6763100);
-  const [rpc, setRpc] = useState('wss://rpc.polkadot.io');
+  const [rpc, setRpc] = useState(defaultRpc);
+  const [isSwitchingRpc, setIsSwitchingRpc] = useState(false);
   const [events, setEvents] = useState([]);
   const [count, setCount] = useState(-1);
-  const [isInitializing, setIsInitializing] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const prevApi = useRef();
 
   const totalBlocks = endBlock - startBlock + 1;
@@ -73,7 +34,7 @@ const Scanner = () => {
     (async () => {
       const api = await createRpc(rpc);
       prevApi.current = { api, rpc };
-      setIsInitializing(false);
+      setIsLoading(false);
     })();
   }, []);
 
@@ -90,8 +51,10 @@ const Scanner = () => {
       return prevApi.current.api;
     }
 
+    setIsSwitchingRpc(true);
     const api = await createRpc(rpc);
     prevApi.current = { api, rpc };
+    setIsSwitchingRpc(false);
 
     return api;
   };
@@ -107,7 +70,6 @@ const Scanner = () => {
       setEvents(e => [...e, ...data]);
       setCount(c => c + 1);
 
-      console.log('data:', data);
       return data;
     };
 
@@ -121,46 +83,59 @@ const Scanner = () => {
 
   return (
     <div id='Scanner'>
-      {isInitializing && <span style={{ fontSize: '200%' }}>connecting to { rpc } ...</span> }
+      <Loading rpc={ rpc } isLoading={ isLoading } />
 
-      { !isInitializing && (
-        <div>
+      { !isLoading && (
+        <>
           <section id='input-container'>
             <InputField
-              name='startBlock'
+              name={ isSwitchingRpc ? 'switching RPC...' : 'RPC' }
+              value={ rpc }
+              onChange={ handleRpcChange }
+            />
+            <InputField
+              name='Start Block'
               value={ startBlock }
               onChange={ handleStartBlockChange }
             />
             <InputField
-              name='endBlock'
+              name='End Block'
               value={ endBlock }
               onChange={ handleEndBlockChange }
             />
-            <InputField
-              name='RPC'
-              value={ rpc }
-              onChange={ handleRpcChange }
-            />
 
-            <button
+            <Button
+              type='primary'
               id='input-container__button'
-              type='button'
               onClick={ fetchData }
             >
               fetch data
-            </button>
+            </Button>
           </section>
-          <br />
-          { count > -1
-            && (
-              <Progress
-                cur={ count }
-                all={ totalBlocks }
-              />
-            )}
 
-          { !!events.length && <EventTable dataSource={ events } /> }
-        </div>
+          <div id='toolBox'>
+            {
+              count < totalBlocks
+                ? (
+                  <Progress
+                    cur={ count }
+                    all={ totalBlocks }
+                  />
+                )
+                : (
+                  <div id='filter'>
+                    filters
+                  </div>
+                )
+            }
+          </div>
+
+          { !!events.length && (
+            <div id='table-container'>
+              <EventTable dataSource={ events } />
+            </div>
+          )}
+        </>
       )}
     </div>
   );
