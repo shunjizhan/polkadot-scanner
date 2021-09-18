@@ -35,7 +35,7 @@ export const getEventsForBlock = async (api, blockNumber) => {
       block: blockNumber,
       section,
       method,
-      events: events.join(', ') || 'no events',
+      events,
     });
   });
 

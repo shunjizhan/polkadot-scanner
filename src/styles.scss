@@ -1,5 +1,8 @@
 $input-width: 300px;
 
+$orange: orange;
+$polkaPurple: rgb(230, 0, 122);
+
 #Scanner {
   display: flex;
   align-items: center;
@@ -21,6 +24,13 @@ $input-width: 300px;
 #input-container__button {
   // border-radius: 5px;
   margin-top: 10px;
+  background-color: rgba($polkaPurple, 0.95);
+  border-color: rgba($polkaPurple, 0.95);
+
+  &:hover {
+    background-color: rgba($polkaPurple, 0.75);
+    border-color: rgba($polkaPurple, 0.75);
+  }
 }
 
 #loading-overlay__text {
@@ -62,4 +72,9 @@ $input-width: 300px;
 #filter {
   border: 1px solid yellow;
   margin-left: 50px;
+}
+
+#loadingText {
+  padding-left: 10px;
+  color: $orange;
 }

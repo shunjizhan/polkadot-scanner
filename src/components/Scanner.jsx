@@ -59,26 +59,31 @@ const Scanner = () => {
     return api;
   };
 
+  const BATCH_SIZE = 10;
+  let dataBuffer = [];
+  const flushData = () => {
+    setEvents(e => dataBuffer.reduce((acc, cur) => acc.concat(cur), e));
+    setCount(c => c + dataBuffer.length);
+    dataBuffer = [];
+  };
+
   const fetchData = async () => {
     setEvents([]);
     setCount(0);
     const api = await getApi();
 
     const _fetch = async block => {
-      console.log(`fethcing ${block}`);
       const data = await getEventsForBlock(api, block);
-      setEvents(e => [...e, ...data]);
-      setCount(c => c + 1);
+      dataBuffer.push(data);
 
-      return data;
+      if (dataBuffer.length === BATCH_SIZE || block === endBlock) {
+        flushData();
+      }
     };
 
-    const pendings = [];
     for (let block = startBlock; block <= endBlock; block++) {
-      pendings.push(_fetch(block));
+      _fetch(block);
     }
-
-    await Promise.all(pendings);
   };
 
   return (
@@ -114,20 +119,10 @@ const Scanner = () => {
           </section>
 
           <div id='toolBox'>
-            {
-              count < totalBlocks
-                ? (
-                  <Progress
-                    cur={ count }
-                    all={ totalBlocks }
-                  />
-                )
-                : (
-                  <div id='filter'>
-                    filters
-                  </div>
-                )
-            }
+            <Progress
+              cur={ count }
+              all={ totalBlocks }
+            />
           </div>
 
           { !!events.length && (
