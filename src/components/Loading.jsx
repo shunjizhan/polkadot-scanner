@@ -11,9 +11,9 @@ const Loading = ({ rpc, isLoading }) => (
     )}
 
     <PacmanLoader
-      color={ 'orange' }
+      color='orange'
       loading={ isLoading }
-      size={ 150 }
+      size={ 130 }
     />
   </div>
 );

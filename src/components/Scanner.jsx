@@ -2,11 +2,10 @@ import React, {
   useState,
   useRef,
 } from 'react';
-import { Button } from 'antd';
 
 import EventTable from './EventTable';
 import Progress from './Progress';
-import InputField from './InputField';
+import Inputs from './Inputs';
 import Loading from './Loading';
 
 import {
@@ -25,7 +24,8 @@ const Scanner = () => {
   const [isSwitchingRpc, setIsSwitchingRpc] = useState(false);
   const [events, setEvents] = useState([]);
   const [count, setCount] = useState(-1);
-  const [isLoading, setIsLoading] = useState(true);
+  const [switchingRPC, setSwitchingRPC] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const prevApi = useRef();
 
   const totalBlocks = endBlock - startBlock + 1;
@@ -34,7 +34,7 @@ const Scanner = () => {
     (async () => {
       const api = await createRpc(rpc);
       prevApi.current = { api, rpc };
-      setIsLoading(false);
+      setSwitchingRPC(false);
     })();
   }, []);
 
@@ -70,14 +70,20 @@ const Scanner = () => {
   const fetchData = async () => {
     setEvents([]);
     setCount(0);
+    setIsLoading(true);
     const api = await getApi();
 
     const _fetch = async block => {
       const data = await getEventsForBlock(api, block);
       dataBuffer.push(data);
 
-      if (dataBuffer.length === BATCH_SIZE || block === endBlock) {
+      if (dataBuffer.length === BATCH_SIZE) {
         flushData();
+      }
+
+      if (block === parseInt(endBlock)) {
+        flushData();
+        setIsLoading(false);
       }
     };
 
@@ -88,35 +94,21 @@ const Scanner = () => {
 
   return (
     <div id='Scanner'>
-      <Loading rpc={ rpc } isLoading={ isLoading } />
+      <Loading rpc={ rpc } isLoading={ switchingRPC } />
 
-      { !isLoading && (
+      { !switchingRPC && (
         <>
-          <section id='input-container'>
-            <InputField
-              name={ isSwitchingRpc ? 'switching RPC...' : 'RPC' }
-              value={ rpc }
-              onChange={ handleRpcChange }
-            />
-            <InputField
-              name='Start Block'
-              value={ startBlock }
-              onChange={ handleStartBlockChange }
-            />
-            <InputField
-              name='End Block'
-              value={ endBlock }
-              onChange={ handleEndBlockChange }
-            />
-
-            <Button
-              type='primary'
-              id='input-container__button'
-              onClick={ fetchData }
-            >
-              fetch data
-            </Button>
-          </section>
+          <Inputs
+            rpc={ rpc }
+            startBlock={ startBlock }
+            endBlock={ endBlock }
+            isSwitchingRpc={ isSwitchingRpc }
+            isLoading={ isLoading }
+            fetchData={ fetchData }
+            handleRpcChange={ handleRpcChange }
+            handleStartBlockChange={ handleStartBlockChange }
+            handleEndBlockChange={ handleEndBlockChange }
+          />
 
           <div id='toolBox'>
             <Progress

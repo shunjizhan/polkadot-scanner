@@ -54,6 +54,7 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
+    "@ant-design/icons": "^4.6.4",
     "@emotion/react": "^11.4.1",
     "@polkadot/api": "^5.8.3",
     "antd": "^4.16.13",
