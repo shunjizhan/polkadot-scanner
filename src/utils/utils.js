@@ -4,7 +4,12 @@ export const createRpc = async endpoint => {
   console.log(`connecting using ${endpoint}...`);
 
   const wsProvider = new WsProvider(endpoint);
-  const api = await ApiPromise.create({ provider: wsProvider });
+  let api;
+  try {
+    api = await ApiPromise.create({ provider: wsProvider });
+  } catch {
+    throw new Error();
+  }
 
   console.log('connected!!');
 
@@ -40,4 +45,9 @@ export const getEventsForBlock = async (api, blockNumber) => {
   });
 
   return res;
+};
+
+export const getLastBlock = async api => {
+  const lastHeader = await api.rpc.chain.getHeader();
+  return lastHeader.number;
 };
