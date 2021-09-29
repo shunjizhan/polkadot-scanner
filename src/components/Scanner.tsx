@@ -19,6 +19,7 @@ import 'antd/dist/antd.css';
 
 const DEFAULT_RPC = 'wss://rpc.polkadot.io';
 const NO_ERR = { rpc: null, start: null, end: null };
+
 const Scanner = () => {
   const [startBlock, setStartBlock] = useState(6763000);
   const [endBlock, setEndBlock] = useState(6763100);
@@ -77,7 +78,7 @@ const Scanner = () => {
     if (endBlock - startBlock > 2000) { setErr({ ...err, end: 'max interval is 2000!' }); return false; }
 
     const lastBlock = await getLastBlock(curApi.current.api);
-    if (endBlock > lastBlock) { setErr({ ...err, end: `end block must be less than last bloack ${lastBlock}!` }); return false; }
+    if (endBlock > lastBlock) { setErr({ ...err, end: `end block must be less than last block ${lastBlock}!` }); return false; }
 
     return true;
   };

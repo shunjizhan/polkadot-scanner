@@ -20,14 +20,14 @@ const prodOptions = {
 const options = isProd ? prodOptions : devOptions;
 
 module.exports = {
-  entry: path.resolve(__dirname, './src/index.js'),
+  entry: path.resolve(__dirname, './src/index.tsx'),
   output: {
     path: path.resolve(__dirname, './dist'),
     filename: `polkadot-scanner${!isProd && '.dev'}.bundle.js`,
   },
   resolve: {
     // our code can resolve 'xxx' instead of writing 'xxx.jsx'
-    extensions: ['*', '.js', '.jsx'],
+    extensions: ['*', '.ts', '.tsx', '.js', '.jsx'],
     fallback: {
       crypto: false,
     },
@@ -41,6 +41,11 @@ module.exports = {
         use: {
           loader: 'babel-loader',
         },
+      },
+      {
+        test: /\.(ts|tsx)$/,
+        exclude: /node_modules/,
+        use: ['babel-loader', 'ts-loader'],
       },
       {
         test: /\.html$/,
