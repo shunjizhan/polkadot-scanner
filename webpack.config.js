@@ -1,9 +1,13 @@
 const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const CleanTerminalPlugin = require('clean-terminal-webpack-plugin');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 const isProd = process.env.NODE_ENV === 'production';
 
+/* --------------- options --------------- */
 const devOptions = {
   mode: 'development',
   devtool: 'source-map',
@@ -15,15 +19,36 @@ const devOptions = {
 
 const prodOptions = {
   mode: 'production',
+  optimization: {
+    minimize: true,
+    minimizer: [new TerserPlugin({
+      parallel: true,
+    })],
+  },
 };
-
 const options = isProd ? prodOptions : devOptions;
+
+/* --------------- plugins --------------- */
+const devPlugins = [];
+const prodPlugins = [
+  // new BundleAnalyzerPlugin(),
+  new MiniCssExtractPlugin(),
+];
+const plugins = [
+  new CleanTerminalPlugin(),
+  new HtmlWebPackPlugin({
+    template: path.resolve(__dirname, './public/index.html'),
+    favicon: path.resolve(__dirname, './public/pokeball.ico'),
+    filename: 'index.html',
+  }),
+  ...(isProd ? prodPlugins : devPlugins),
+];
 
 module.exports = {
   entry: path.resolve(__dirname, './src/index.tsx'),
   output: {
     path: path.resolve(__dirname, './dist'),
-    filename: `polkadot-scanner${!isProd && '.dev'}.bundle.js`,
+    filename: 'polkadot-scanner.bundle.js',
   },
   resolve: {
     // our code can resolve 'xxx' instead of writing 'xxx.jsx'
@@ -58,22 +83,13 @@ module.exports = {
       {
         test: /\.s?css$/,
         use: [
-          'style-loader',   // creates style nodes from JS strings
+          isProd ? MiniCssExtractPlugin.loader : 'style-loader',   // creates style nodes from JS strings
           'css-loader',     // translates CSS into CommonJS
           'sass-loader',    // compiles Sass to CSS, using Node Sass by default
         ],
       },
     ],
   },
-  plugins: [
-    // generates an HTML file by injecting automatically all our generated bundles.
-    new HtmlWebPackPlugin({
-      template: path.resolve(__dirname, './public/index.html'),
-      favicon: path.resolve(__dirname, './public/pokeball.ico'),
-      filename: 'index.html',
-    }),
-    // clear terminal in each build
-    new CleanTerminalPlugin(),
-  ],
+  plugins,
   ...options,
 };

@@ -12,4 +12,5 @@ A polkadot scanner to display block events.
 - install dependencies: `yarn`
 - run dev server: `yarn start`
 - build: `yarn build`
+- serve production: `yarn serve`
 - lint: `yarn lint`
