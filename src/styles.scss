@@ -1,4 +1,4 @@
-$input-width: 300px;
+$input-width: 368px;
 
 $orange: orange;
 $polkaPurple: rgb(230, 0, 122);
@@ -17,21 +17,14 @@ $polkaPurple: rgb(230, 0, 122);
   width: $input-width;
 }
 
-.input-container__field {
-  width: 100%;
-  text-align: center;
-}
-
 #input-container__button {
-  // border-radius: 5px;
+  border-radius: 2px;
   margin-top: 10px;
   background-color: rgba($polkaPurple, 0.95);
-  // border-color: rgba($polkaPurple, 0.95);
   border: none;
 
   &:hover {
     background-color: rgba($polkaPurple, 0.75);
-    // border-color: rgba($polkaPurple, 0.75);
     border: none;
   }
 }
@@ -43,12 +36,10 @@ $polkaPurple: rgb(230, 0, 122);
 
 #table-container {
   width: 80%;
-  // border: 1px solid red;
 }
 
 #data-table {
   width: 100%;
-  // border: 1px solid orange;
 }
 
 #progress {
@@ -56,8 +47,6 @@ $polkaPurple: rgb(230, 0, 122);
 }
 
 #progress-count {
-  // border: 1px solid red;
-  // float: right;
   display: flex;
   margin: 5px 0;
   svg {
@@ -67,7 +56,6 @@ $polkaPurple: rgb(230, 0, 122);
 
 #toolBox {
   display: flex;
-  // border: 1px solid blue;
   margin-bottom: 10px;
   width: 80%;
   height: 50px;
@@ -83,4 +71,18 @@ $polkaPurple: rgb(230, 0, 122);
 #loadingText {
   padding-left: 10px;
   color: $polkaPurple;
+}
+
+.ant-row {
+  margin-bottom: 5px !important;
+}
+
+.anticon-wifi {
+  color: #00e600 !important;
+}
+
+.anticon-sync,
+.anticon-disconnect,
+.anticon-wifi {
+  margin-right: 6px;
 }

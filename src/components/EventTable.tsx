@@ -22,7 +22,9 @@ const renderEvents = (events: Array<string>): ReactElement  => (
   </>
 );
 
-const renderBlock = (block: number): ReactElement => (<a href={ `https://polkadot.subscan.io/block/${block}` }>{ block }</a>);
+const renderBlock = (block: number): ReactElement => (
+  <a href={ `https://polkadot.subscan.io/block/${block}` }>{ block }</a>
+);
 
 export interface TableData {
   [key: string]: number | string | string[],
@@ -35,8 +37,11 @@ interface EventTableProps {
   dataSource: TableData[],
 }
 
-const getStringSorter = (key: string) => (a: TableData, b: TableData) => (a[key] as string).localeCompare(b[key] as string);
-const getStringFilter = (key: string) => (value: string | number | boolean, record: TableData) => record[key] === value;
+const getStringSorter = (key: string) =>
+  (a: TableData, b: TableData) => (a[key] as string).localeCompare(b[key] as string);
+
+const getStringFilter = (key: string) => 
+  (value: string | number | boolean, record: TableData) => record[key] === value;
 
 const EventTable: FC<EventTableProps> = ({ dataSource }) => {
   const columns: ColumnsType<any> = [

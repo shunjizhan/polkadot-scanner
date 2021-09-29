@@ -59,6 +59,7 @@ module.exports = {
     'react/jsx-props-no-spreading': 0,                                      // allow passing in props like { ...restProps }
     'import/extensions': 0,                                                 // allow passing in props like { ...restProps }
     'react-hooks/exhaustive-deps': 0,                                       // so useEffect can have empty deps
+    'implicit-arrow-linebreak': 0,                                          // can use new line in long arrow function
 
     /* ---------- ts override ---------- */
     // https://stackoverflow.com/questions/63818415/react-was-used-before-it-was-defined
