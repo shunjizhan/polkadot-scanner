@@ -1,8 +1,15 @@
 # Polkadot Scanner
-Basic polkadot scanner to display block events
+A polkadot scanner to display block events.
+
+[Production App](polkadot-scanner-nine.vercel.app)
+
+## Features
+- fetch and display events for a range of block
+- use custom RPC endpoint
+- sort and filter on table columns
 
 ## Commands
-- run dev server: `yarn && yarn start`
+- install dependencies: `yarn`
+- run dev server: `yarn start`
 - build: `yarn build`
-- test: `yarn test`
 - lint: `yarn lint`

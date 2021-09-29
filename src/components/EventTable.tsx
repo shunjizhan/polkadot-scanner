@@ -40,7 +40,7 @@ interface EventTableProps {
 const getStringSorter = (key: string) =>
   (a: TableData, b: TableData) => (a[key] as string).localeCompare(b[key] as string);
 
-const getStringFilter = (key: string) => 
+const getStringFilter = (key: string) =>
   (value: string | number | boolean, record: TableData) => record[key] === value;
 
 const EventTable: FC<EventTableProps> = ({ dataSource }) => {
