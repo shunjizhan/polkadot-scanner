@@ -1,9 +1,15 @@
 import React, {
   useState,
+  useEffect,
   useRef,
+  ChangeEvent,
+  FC,
+  SetStateAction,
+  Dispatch,
 } from 'react';
+import { ApiPromise } from '@polkadot/api';
 
-import EventTable from './EventTable';
+import EventTable, { TableData } from './EventTable';
 import Progress from './Progress';
 import Inputs from './Inputs';
 import Loading from './Loading';
@@ -17,24 +23,37 @@ import {
 import '../styles.scss';
 import 'antd/dist/antd.css';
 
+interface ApiRef {
+  api: ApiPromise | null,
+  rpc: string,
+}
+
+export interface Err {
+  rpc: string | null,
+  start: string | null,
+  end: string | null,
+}
+
+export type eventHandler = (e: ChangeEvent<HTMLInputElement>) => void;
+
 const DEFAULT_RPC = 'wss://rpc.polkadot.io';
 const NO_ERR = { rpc: null, start: null, end: null };
 
-const Scanner = () => {
-  const [startBlock, setStartBlock] = useState(6763000);
-  const [endBlock, setEndBlock] = useState(6763100);
-  const [rpc, setRpc] = useState(DEFAULT_RPC);
-  const [isSwitchingRpc, setIsSwitchingRpc] = useState(false);
-  const [events, setEvents] = useState([]);
-  const [count, setCount] = useState(-1);
-  const [switchingRPC, setSwitchingRPC] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [err, setErr] = useState(NO_ERR);
-  const curApi = useRef();
+const Scanner: FC = () => {
+  const [startBlock, setStartBlock] = useState<number>(6763000);
+  const [endBlock, setEndBlock] = useState<number>(6763100);
+  const [rpc, setRpc] = useState<string>(DEFAULT_RPC);
+  const [isSwitchingRpc, setIsSwitchingRpc] = useState<boolean>(false);
+  const [events, setEvents] = useState<TableData[]>([]);
+  const [count, setCount] = useState<number>(-1);
+  const [switchingRPC, setSwitchingRPC] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [err, setErr] = useState<Err>(NO_ERR);
+  const curApi = useRef<ApiRef>({ api: null, rpc: DEFAULT_RPC });
 
   const totalBlocks = endBlock - startBlock + 1;
 
-  useState(() => {
+  useEffect(() => {
     (async () => {
       const api = await createRpc(rpc);
       curApi.current = { api, rpc };
@@ -42,8 +61,8 @@ const Scanner = () => {
     })();
   }, []);
 
-  const getInputHandler = fn => e => {
-    fn(e.target.value);
+  const getInputHandler = (fn: Dispatch<SetStateAction<number>> | Dispatch<SetStateAction<string>>): eventHandler => e => {
+    fn(e.target.value as (SetStateAction<number> & SetStateAction<string>));
     setCount(-1);
   };
   const handleStartBlockChange = getInputHandler(setStartBlock);
@@ -77,16 +96,16 @@ const Scanner = () => {
     if (endBlock < 0) { setErr({ ...err, end: 'end block must be greater than 0!' }); return false; }
     if (endBlock - startBlock > 2000) { setErr({ ...err, end: 'max interval is 2000!' }); return false; }
 
-    const lastBlock = await getLastBlock(curApi.current.api);
+    const lastBlock = await getLastBlock(curApi.current.api as ApiPromise);
     if (endBlock > lastBlock) { setErr({ ...err, end: `end block must be less than last block ${lastBlock}!` }); return false; }
 
     return true;
   };
 
   const BATCH_SIZE = 10;
-  let dataBuffer = [];
+  let dataBuffer: TableData[][] = [];
   const flushData = () => {
-    setEvents(e => dataBuffer.reduce((acc, cur) => acc.concat(cur), e));
+    setEvents(e => e.concat(...dataBuffer));
     setCount(c => c + dataBuffer.length);
     dataBuffer = [];
   };
@@ -102,15 +121,15 @@ const Scanner = () => {
 
     await updateApi();
 
-    const _fetch = async block => {
-      const data = await getEventsForBlock(curApi.current.api, block);
+    const _fetch = async (block: number) => {
+      const data = await getEventsForBlock(curApi.current.api as ApiPromise, block);
       dataBuffer.push(data);
 
       if (dataBuffer.length === BATCH_SIZE) {
         flushData();
       }
 
-      if (block === parseInt(endBlock)) {
+      if (block === parseInt(String(endBlock), 10)) {
         flushData();
         setIsLoading(false);
       }
@@ -138,7 +157,6 @@ const Scanner = () => {
             handleStartBlockChange={ handleStartBlockChange }
             handleEndBlockChange={ handleEndBlockChange }
             err={ err }
-            setErr={ setErr }
           />
 
           <div id='toolBox'>

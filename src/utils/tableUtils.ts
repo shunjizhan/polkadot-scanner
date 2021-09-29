@@ -175,7 +175,11 @@ export const EVENTS_FILTER = [
   },
 ];
 
-export const TAG_COLORS = {
+interface Map {
+  [key: string]: string,
+}
+
+export const TAG_COLORS: Map = {
   system: 'cyan',
   balances: 'green',
   treasury: 'orange',
@@ -190,7 +194,7 @@ export const TAG_COLORS = {
   proxy: 'blue',
 };
 
-export const getTagColor = event => {
+export const getTagColor = (event: string): string => {
   const prefix = event.split('.')[0];
   return TAG_COLORS[prefix];
 };

@@ -1,20 +1,33 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { Input, Button, Form } from 'antd';
 import { SyncOutlined } from '@ant-design/icons';
+
+import { Err, eventHandler } from './Scanner';
 
 const SUCCESS = 'success';
 const ERROR = 'error';
 
-const InputField = ({
-  name, value, onChange, disabled,
-}) => (
-  <div />
-);
+interface InputsProps {
+  rpc: string,
+  startBlock: number,
+  endBlock: number,
+  err: Err,
 
-const Inputs = ({
+  isSwitchingRpc: boolean,
+  isLoading: boolean,
+
+  fetchData: () => void,
+  handleRpcChange: eventHandler,
+  handleStartBlockChange: eventHandler,
+  handleEndBlockChange: eventHandler,
+
+}
+
+const Inputs: FC<InputsProps> = ({
   rpc,
   startBlock,
   endBlock,
+  err,
 
   isSwitchingRpc,
   isLoading,
@@ -23,9 +36,6 @@ const Inputs = ({
   handleRpcChange,
   handleStartBlockChange,
   handleEndBlockChange,
-
-  err,
-  setErr,
 }) => (
   <section id='input-container'>
     <Form>

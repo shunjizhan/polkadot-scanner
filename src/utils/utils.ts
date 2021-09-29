@@ -1,14 +1,16 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
+import { SignedBlock } from '@polkadot/types/interfaces';
+import { TableData } from '../components/EventTable';
 
-export const createRpc = async endpoint => {
-  console.log(`connecting using ${endpoint}...`);
+export const createRpc = async (rpc: string): Promise<ApiPromise> => {
+  console.log(`connecting to ${rpc}...`);
 
-  const wsProvider = new WsProvider(endpoint);
+  const wsProvider = new WsProvider(rpc);
   let api;
   try {
     api = await ApiPromise.create({ provider: wsProvider });
   } catch {
-    throw new Error();
+    throw new Error(`connection to ${rpc} failed!`);
   }
 
   console.log('connected!!');
@@ -16,20 +18,19 @@ export const createRpc = async endpoint => {
   return api;
 };
 
-export const getSignedBlock = async (api, blockNumber) => {
+export const getSignedBlock = async (api: ApiPromise, blockNumber: number): Promise<SignedBlock> => {
   const blockHash = await api.rpc.chain.getBlockHash(blockNumber);
   const signedBlock = await api.rpc.chain.getBlock(blockHash);
 
   return signedBlock;
 };
 
-export const getEventsForBlock = async (api, blockNumber) => {
+export const getEventsForBlock = async (api: ApiPromise, blockNumber: number): Promise<TableData[]> => {
   const signedBlock = await getSignedBlock(api, blockNumber);
   const allRecords = await api.query.system.events.at(signedBlock.block.header.hash);
 
-  const res = [];
+  const res: TableData[] = [];
   signedBlock.block.extrinsics.forEach(({ method: { method, section } }, index) => {
-    // filter the specific events based on the phase and then the index of our extrinsic in the block
     const events = allRecords
       .filter(({ phase }) => (
         phase.isApplyExtrinsic
@@ -47,7 +48,8 @@ export const getEventsForBlock = async (api, blockNumber) => {
   return res;
 };
 
-export const getLastBlock = async api => {
+export const getLastBlock = async (api: ApiPromise): Promise<number> => {
   const lastHeader = await api.rpc.chain.getHeader();
-  return lastHeader.number;
+
+  return lastHeader.number.toNumber();
 };

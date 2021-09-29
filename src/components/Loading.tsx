@@ -1,7 +1,12 @@
 import React from 'react';
 import PacmanLoader from 'react-spinners/PacmanLoader';
 
-const Loading = ({ rpc, isLoading }) => (
+interface LoadingProps {
+  rpc: string,
+  isLoading: boolean,
+}
+
+const Loading: React.FC<LoadingProps> = ({ rpc, isLoading }) => (
   <div id='loading-overlay'>
     { isLoading && (
       <div id='loading-overlay__text'>

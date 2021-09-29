@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { Line } from 'rc-progress';
 import RingLoader from 'react-spinners/RingLoader';
 import { CheckOutlined } from '@ant-design/icons';
 
 const color = 'rgb(230, 0, 122)';
-const Progress = ({ cur, all }) => {
+interface ProgressProps {
+  cur: number,
+  all: number,
+}
+
+const Progress: FC<ProgressProps> = ({ cur, all }) => {
   if (cur < 0) return null;
 
   return (
@@ -20,7 +25,7 @@ const Progress = ({ cur, all }) => {
       </div>
       <Line
         percent={ (100 * cur) / all }
-        strokeWidth='2'
+        strokeWidth={ 2 }
         strokeColor={ `rgba(230, 0, 122, ${0.6 + (0.4 * cur) / all})` }
       />
     </div>

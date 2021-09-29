@@ -1,8 +1,6 @@
-import React from 'react';
-import {
-  Table,
-  Tag,
-} from 'antd';
+import React, { ReactElement, FC } from 'react';
+import { Table, Tag } from 'antd';
+import { ColumnsType } from 'antd/es/table';
 
 import {
   SECTIONS_FILTERS,
@@ -11,7 +9,7 @@ import {
   getTagColor,
 } from '../utils/tableUtils';
 
-const renderEvents = events => (
+const renderEvents = (events: Array<string>): ReactElement  => (
   <>
     {
       events.map((e, i) => (
@@ -24,19 +22,30 @@ const renderEvents = events => (
   </>
 );
 
-const renderBlock = block => (<a href={ `https://polkadot.subscan.io/block/${block}` }>{ block }</a>);
+const renderBlock = (block: number): ReactElement => (<a href={ `https://polkadot.subscan.io/block/${block}` }>{ block }</a>);
 
-const getStringSorter = key => (a, b) => a[key].localeCompare(b[key]);
-const getStringFilter = key => (value, record) => record[key] === value;
+export interface TableData {
+  [key: string]: number | string | string[],
+  block: number,
+  method: string,
+  section: string,
+  events: string[],
+}
+interface EventTableProps {
+  dataSource: TableData[],
+}
 
-const EventTable = ({ dataSource }) => {
-  const columns = [
+const getStringSorter = (key: string) => (a: TableData, b: TableData) => (a[key] as string).localeCompare(b[key] as string);
+const getStringFilter = (key: string) => (value: string | number | boolean, record: TableData) => record[key] === value;
+
+const EventTable: FC<EventTableProps> = ({ dataSource }) => {
+  const columns: ColumnsType<any> = [
     {
       title: 'Block',
       dataIndex: 'block',
       key: 'block',
       render: renderBlock,
-      sorter: (a, b) => (a - b > 0 ? 1 : -1),
+      sorter: (a: number, b: number): number => (a - b > 0 ? 1 : -1),
     },
     {
       title: 'Section',
@@ -60,7 +69,7 @@ const EventTable = ({ dataSource }) => {
       key: 'events',
       render: renderEvents,
       filters: EVENTS_FILTER,
-      onFilter: (value, record) => record.events.some(e => e.split('.')[0] === value),
+      onFilter: (value: string | number | boolean, record: TableData) => record.events.some(e => e.split('.')[0] === value),
     },
   ];
 
